@@ -1,0 +1,141 @@
+#!/usr/bin/env python
+
+# {{{ Include
+import os
+import os.path
+from os.path import join
+
+import itertools
+from itertools import takewhile
+
+import tempfile
+
+import subprocess
+# }}}
+
+# {{{ Configuration
+TEAM_NAME = "Mithril @ SJTU"
+
+DESCRIPTION_FILE = "cover.markdown"
+CODE_FILE = "page.cpp"
+
+INDENT_SIZE = 4
+MAX_WIDTH = 80
+
+MAIN_FONT = "SimSun"
+BOLD_FONT = "Hei"
+MONO_FONT = "Monaco"
+#MAIN_FONT = "WenQuanYi Zen Hei"
+#BOLD_FONT = "WenQuanYi Micro Hei"
+#MONO_FONT = "DejaVu Sans Mono"
+# }}}
+
+class Code:
+    def __init__(self, code):
+        code = code.rstrip().replace("\t", " " * INDENT_SIZE)
+        self.lines = ""
+        for line in code.split("\n"):
+            line = line.rstrip()
+            if line:
+                initial_indent = 0
+                while line[initial_indent] == ' ':
+                    initial_indent += 1
+                current_indent = 0
+                first_line = True
+                while line:
+                    seperator = min(MAX_WIDTH - current_indent, len(line))
+                    while seperator < len(line) and line[seperator] != ' ':
+                        seperator -= 1
+                    self.lines += " " * current_indent + line[:seperator]
+                    self.lines += "\n"
+                    line = line[seperator:]
+                    if first_line:
+                        first_line = False
+                        current_indent = initial_indent + 2 * INDENT_SIZE
+            else:
+                self.lines += "\n"
+
+    def read(self):
+        return "\\begin{lstlisting}\n" + self.lines + "\\end{lstlisting}\n\n"
+
+class Description:
+    def __init__(self, depth, description = ""):
+        description = description.rstrip()
+        tempFile = tempfile.TemporaryFile()
+        tempFile.write('#' * depth + ' ')
+        tempFile.write(description)
+        tempFile.seek(0)
+        self.data = subprocess.check_output(["pandoc", "-t", "latex"], 
+                stdin = tempFile)
+        tempFile.close()
+
+    def read(self):
+        return self.data + "\n"
+
+class RawData:
+    def __init__(self, depth):
+        self.description = Description(depth)
+        self.children = []
+
+    @staticmethod
+    def parse(path, depth = 0):
+        d = RawData(depth)
+        files = sorted(os.listdir(path))
+        if DESCRIPTION_FILE in files:
+            f = open(join(path, DESCRIPTION_FILE)) 
+            d.description = Description(depth, f.read())
+        if CODE_FILE in files:
+            f = open(join(path, CODE_FILE)) 
+            d.code = Code(f.read())
+        for name in files:
+            if not name.startswith(".") and os.path.isdir(join(path, name)):
+                d.children.append(RawData.parse(join(path, name), depth + 1))
+        return d
+
+    def read(self):
+        result = self.description.read()
+        try:
+            result += self.code.read()
+        except:
+            pass
+        pass
+        for c in self.children:
+            result += c.read()
+        return result
+
+if __name__ == "__main__":
+    tempFile = tempfile.TemporaryFile()
+    tempFile.write(r"""\documentclass{article}
+
+
+\usepackage{amssymb}
+\usepackage{cmap}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xeCJK}
+
+\geometry{margin=1in}
+
+\setCJKmainfont[BoldFont={%s}]
+{%s}
+\setCJKmonofont{%s}
+
+\lstset{language=C++, 
+        basicstyle=\ttfamily \small}
+
+\begin{document}
+
+\title{Standard Code Library}
+\author{%s}
+\date{\today}
+
+\maketitle
+
+\tableofcontents""" %(BOLD_FONT, MAIN_FONT, MONO_FONT, TEAM_NAME) + '\n')
+    data = RawData.parse(".")
+    tempFile.write(data.read() + '\n')
+    tempFile.write(r"\end{document}")
+    tempFile.seek(0)
+    nullFile = open(os.devnull, "w")
+    subprocess.call(["xelatex"], stdin = tempFile, stdout = nullFile, stderr = nullFile)
