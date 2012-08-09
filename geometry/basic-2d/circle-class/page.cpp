@@ -7,4 +7,8 @@ struct Circle {
     Circle(const Point &a, const Point &c, const Point &d): o(circumcenter(a, b, c)) {
         r = (a - o).norm();
     }
+
+    bool contains(const Point &p) const {
+        return (p - o).norm() < r + EPSILON;
+    }
 };
