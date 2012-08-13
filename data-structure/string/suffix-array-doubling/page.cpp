@@ -12,9 +12,7 @@ void construct(int text[], int n, int array[], int rank[]) {
         rank[array[i]] = i == 0? 1: 
             rank[array[i - 1]] + (order[i - 1].first != order[i].first);
     }
-    static int newArray[N];
-    static int newRank[2][N];
-    static int count[N + 1];
+    static int newRank[2][N], newArray[N], count[N + 1];
     for (int length = 1; length < n; length <<= 1) {
         for (int i = 0; i < n; ++ i) {
             newRank[0][i] = rank[i];
