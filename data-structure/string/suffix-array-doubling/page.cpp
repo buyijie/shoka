@@ -1,6 +1,8 @@
+const int N = 123456;
+
 template <class T> 
-void construct(T text[], int n, int array[], int rank[]) {
-    static pair <T, int> order[n];
+void construct(int text[], int n, int array[], int rank[]) {
+    static pair <T, int> order[N];
     for (int i = 0; i < n; ++ i) {
         order[i] = make_pair(text[i], i);
     }
@@ -10,9 +12,9 @@ void construct(T text[], int n, int array[], int rank[]) {
         rank[array[i]] = i == 0? 1: 
             rank[array[i - 1]] + (order[i - 1].first != order[i].first);
     }
-    static int newArray[n];
-    static int newRank[2][n];
-    static int count[n + 1];
+    static int newArray[N];
+    static int newRank[2][N];
+    static int count[N + 1];
     for (int length = 1; length < n; length <<= 1) {
         for (int i = 0; i < n; ++ i) {
             newRank[0][i] = rank[i];
