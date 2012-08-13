@@ -1,7 +1,3 @@
-#include <cstring>
-#include <utility>
-using namespace std;
-
 template <class T> 
 void construct(T text[], int n, int array[], int rank[]) {
     static pair <T, int> order[n];
