@@ -12,6 +12,8 @@ struct Point {
     Point &operator *=(double k) { return x *= k, y *= k, *this; }
     Point &operator /=(double k) { return x /= k, y /= k, *this; }
 
+    Point rotate() const { return Point(-y, x); }
+
     double norm2() const;
     double norm() const;
     Point normalize() const;
