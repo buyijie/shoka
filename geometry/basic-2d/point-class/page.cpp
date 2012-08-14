@@ -17,6 +17,8 @@ struct Point {
     double norm2() const;
     double norm() const;
     Point normalize() const;
+
+    double arg() const { return atan2(y, x); }
 };
 
 Point operator ==(const Point &a, const Point &b) { return signum(a.x - b.x) == 0 && signum(a.y - b.y) == 0; }
