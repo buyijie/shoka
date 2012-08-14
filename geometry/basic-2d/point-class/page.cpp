@@ -27,6 +27,7 @@ Point operator /(Point a, double k) { return a /= k; }
 
 double det(const Point &a, const Point &b) { return a.x * b.y - b.x * a.y; }
 double dot(const Point &a, const Point &b) { return a.x * b.x + a.y * b.y; }
+double angle(const Point &a, const Point &b) { return atan2(det(a, b), dot(a, b)); }
 
 double Point::norm2() const { return dot(*this, *this); }
 double Point::norm() const { return sqrt(norm2()); }
