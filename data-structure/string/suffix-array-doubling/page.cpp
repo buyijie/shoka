@@ -1,8 +1,8 @@
 const int N = 123456;
 
-template <class T> 
-void construct(int text[], int n, int array[], int rank[]) {
-    static pair <T, int> order[N];
+template <class Type> 
+void construct(Type text[], int n, int array[], int rank[]) {
+    static pair <Type, int> order[N];
     for (int i = 0; i < n; ++ i) {
         order[i] = make_pair(text[i], i);
     }
