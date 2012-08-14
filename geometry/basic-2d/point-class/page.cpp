@@ -19,6 +19,8 @@ struct Point {
     Point normalize() const;
 };
 
+Point operator ==(const Point &a, const Point &b) { return signum(a.x - b.x) == 0 && signum(a.y - b.y) == 0; }
+
 Point operator +(Point a, const Point &b) { return a += b; }
 Point operator -(Point a, const Point &b) { return a -= b; }
 Point operator *(Point a, double k) { return a *= k; }

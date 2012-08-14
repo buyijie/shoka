@@ -12,3 +12,5 @@ struct Circle {
         return (p - o).norm() < r + EPSILON;
     }
 };
+
+bool operator ==(const Circle &a, const Circle &b) { return a.o == b.o && a.r == b.r; }
