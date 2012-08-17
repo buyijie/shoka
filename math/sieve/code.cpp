@@ -7,7 +7,7 @@ vector <int> sieve(int n) {
         }
         for (int j = 0; j < (int)primes.size() && i * primes[j] <= n; ++ j) {
             visit[i * primes[j]] = true;
-            if (i % primes[j]) {
+            if (i % primes[j] == 0) {
                 break;
             }
         }
