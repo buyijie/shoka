@@ -1,6 +1,4 @@
 struct Node {
-    static int MAX;
-
     int count;
     Node *left, *right;
 
