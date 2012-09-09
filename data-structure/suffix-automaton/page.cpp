@@ -1,6 +1,5 @@
 struct State {
-    int length, mask;
-    long long ways;
+    int length;
     State *parent;
     State *go[C];
 
