@@ -1,20 +1,23 @@
 struct State {
-    int length;
-    State *parent;
-    State *go[C];
+    static vector <State*> states;
 
-    State(int length): length(length), mask(-1), parent(NULL) {
-        memset(go, 0, sizeof(go));
+    int id, length;
+    State *parent;
+    State* go[C];
+
+    State(int length) : id((int)states.size()), length(length), parent(NULL) {
+        memset(go, NULL, sizeof(go));
+        states.push_back(this);
     }
 
-    State* extend(State *start, int token) {
+    State* extend(State* start, int token) {
         State *p = this;
-        State *np = new State(this->length + 1);
-        while (p != NULL && p->go[token] == NULL) {
+        State *np = new State(length + 1);
+        while (p && !p->go[token]) {
             p->go[token] = np;
             p = p->parent;
         }
-        if (p == NULL) {
+        if (!p) {
             np->parent = start;
         } else {
             State *q = p->go[token];
@@ -25,7 +28,7 @@ struct State {
                 memcpy(nq->go, q->go, sizeof(q->go));
                 nq->parent = q->parent;
                 np->parent = q->parent = nq;
-                while (p != NULL && p->go[token] == q) {
+                while (p && p->go[token] == q) {
                     p->go[token] = nq;
                     p = p->parent;
                 }
