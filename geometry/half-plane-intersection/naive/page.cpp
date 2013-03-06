@@ -7,7 +7,7 @@ void rebuild(const Point &a, const Point &b) {
         if (signum(s_1) * signum(s_2) < 0) {
             newPoints[m ++] = (points[i + 1] * s_2 - points[i] * s_1) / (s_2 - s_1);
         }
-        if (signum(det(b - a, points[i + 1])) >= 0) {
+        if (signum(det(b - a, points[i + 1] - a)) >= 0) {
             newPoints[m ++] = points[i + 1];
         }
     }
